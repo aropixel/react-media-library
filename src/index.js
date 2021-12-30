@@ -6,20 +6,37 @@ import reportWebVitals from './reportWebVitals';
 
 
 import mockList from "./mock/list.json";
-
-global.fetch = (() =>
-        Promise.resolve({
-            json: () => Promise.resolve(mockList),
-        })
-)
-
+import mockRemove from "./mock/list.json";
+import mockUpdate from "./mock/list.json";
+import mockUpload from "./mock/list.json";
 
 const endPoints = {
     list: 'https://api.example.com/images/list',
     upload: 'https://api.example.com/images/upload',
     remove: 'https://api.example.com/images/remove',
-    update: 'https://api.example.com/images/remove',
-}
+    update: 'https://api.example.com/images/update',
+};
+
+global.fetch = ((url) => Promise.resolve({
+        json: () => {
+            switch (url) {
+
+                case 'https://api.example.com/images/list':
+                    return Promise.resolve(mockList);
+
+                case 'https://api.example.com/images/remove':
+                    return Promise.resolve(mockRemove);
+
+                case 'https://api.example.com/images/update':
+                    return Promise.resolve(mockUpdate);
+
+                case 'https://api.example.com/images/upload':
+                    return Promise.resolve(mockUpload);
+
+            }
+        },
+    })
+)
 
 ReactDOM.render(
   <React.StrictMode>
