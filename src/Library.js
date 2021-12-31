@@ -1,10 +1,13 @@
 import React from 'react';
-
-import Table from './component/Table';
-import convertJson from './logic/JsonConverter'
-
 import i18n from "i18next";
 import { useTranslation, initReactI18next } from "react-i18next";
+import { useTable, useFilters, useGlobalFilter, useAsyncDebounce, usePagination } from 'react-table'
+
+import './Library.css';
+import ControlledTable from './component/ControlledTable';
+import Modal from './component/Modal';
+
+import convertJson from './logic/JsonConverter'
 
 import commonFr from "./translations/fr/common.json";
 import commonEn from "./translations/en/common.json";
@@ -25,10 +28,7 @@ i18n
     });
 
 
-
-function App({
-    apiEndPoints
-}) {
+const Library = ({apiEndPoints}) => {
 
     const { t } = useTranslation();
 
@@ -49,12 +49,18 @@ function App({
             Header: t('file'),
             accessor: 'file',
         },
+        {
+            Header: '',
+            accessor: 'action',
+        },
     ];
 
 
     // We'll start our table without any data
     const [data, setData] = React.useState([])
     const [loading, setLoading] = React.useState(false)
+    const [isModalOpened, setIsModalOpened] = React.useState(false)
+    const [deleteCallback, setDeleteCallBack] = React.useState(()=>{})
     const [pageCount, setPageCount] = React.useState(0)
     const fetchIdRef = React.useRef(0)
 
@@ -77,7 +83,7 @@ function App({
             .then(
                 (result) => {
 
-                    setData(convertJson(result.slice(startRow, endRow)))
+                    setData(convertJson(result.slice(startRow, endRow), setIsModalOpened, setDeleteCallBack))
                     setPageCount(Math.ceil(result.length / pageSize))
                     setLoading(false)
 
@@ -93,17 +99,24 @@ function App({
 
     }, [])
 
-  return (
-    <div className="App">
-      <Table
-          columns={columns}
-          data={data}
-          fetchData={fetchData}
-          loading={loading}
-          pageCount={pageCount}
-      />
-    </div>
-  );
+    return (
+        <>
+        <ControlledTable
+            columns={columns}
+            data={data}
+            fetchData={fetchData}
+            loading={loading}
+            pageCount={pageCount}
+        />
+        <Modal
+            isOpened={isModalOpened}
+            setModalOpened={setIsModalOpened}
+            title={"Supprimer ?"}
+        >
+            <p>Voulez-vous supprimer l'image de la bibliothèque ?</p>
+        </Modal>
+        </>
+    );
 }
 
-export default App;
+export default Library;

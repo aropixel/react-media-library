@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import Library from './Library';
 import reportWebVitals from './reportWebVitals';
 
 
@@ -40,7 +40,7 @@ global.fetch = ((url) => Promise.resolve({
 
 ReactDOM.render(
   <React.StrictMode>
-    <App apiEndPoints={endPoints} />
+    <Library apiEndPoints={endPoints} />
   </React.StrictMode>,
   document.getElementById('root')
 );
